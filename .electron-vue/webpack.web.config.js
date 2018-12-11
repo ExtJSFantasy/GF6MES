@@ -1,15 +1,15 @@
-'use strict'
+'use strict';
 
-process.env.BABEL_ENV = 'web'
+process.env.BABEL_ENV = 'web';
 
-const path = require('path')
-const webpack = require('webpack')
+const path = require('path');
+const webpack = require('webpack');
 
-const BabiliWebpackPlugin = require('babili-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { VueLoaderPlugin } = require('vue-loader')
+const BabiliWebpackPlugin = require('babili-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
@@ -38,13 +38,27 @@ let webConfig = {
         use: ['vue-style-loader', 'css-loader']
       },
       {
+        test: /\.scss$/,
+        use: [
+          {
+            loader: 'style-loader' // 将 JS 字符串生成为 style 节点
+          },
+          {
+            loader: 'css-loader' // 将 CSS 转化成 CommonJS 模块
+          },
+          {
+            loader: 'sass-loader' // 将 Sass 编译成 CSS
+          }
+        ]
+      },
+      {
         test: /\.html$/,
         use: 'vue-html-loader'
       },
       {
         test: /\.js$/,
         use: 'babel-loader',
-        include: [ path.resolve(__dirname, '../src/renderer') ],
+        include: [path.resolve(__dirname, '../src/renderer')],
         exclude: /node_modules/
       },
       {
@@ -85,7 +99,7 @@ let webConfig = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new MiniCssExtractPlugin({filename: 'styles.css'}),
+    new MiniCssExtractPlugin({ filename: 'styles.css' }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),
@@ -109,18 +123,18 @@ let webConfig = {
   resolve: {
     alias: {
       '@': path.join(__dirname, '../src/renderer'),
-      'vue$': 'vue/dist/vue.esm.js'
+      vue$: 'vue/dist/vue.esm.js'
     },
     extensions: ['.js', '.vue', '.json', '.css']
   },
   target: 'web'
-}
+};
 
 /**
  * Adjust webConfig for production settings
  */
 if (process.env.NODE_ENV === 'production') {
-  webConfig.devtool = ''
+  webConfig.devtool = '';
 
   webConfig.plugins.push(
     new BabiliWebpackPlugin(),
@@ -137,7 +151,7 @@ if (process.env.NODE_ENV === 'production') {
     new webpack.LoaderOptionsPlugin({
       minimize: true
     })
-  )
+  );
 }
 
-module.exports = webConfig
+module.exports = webConfig;
